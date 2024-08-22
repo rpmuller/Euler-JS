@@ -236,7 +236,7 @@ function collatz_length(n,maxsteps=1000){
   let i=0, next=n;
   for (i=1; i<maxsteps; i++){
     if (next === 1) break
-    next = collatz_step(n)
+    next = iseven(next) ? next/2 : 3*next+1
   }
   return i 
 }
@@ -255,5 +255,32 @@ function p15(){
   // number of paths of a 1x1 grid is 2
   
 }
+
+function zeros2d(m,n){
+  let data = []
+  for (let i=0; i<m; i++){
+    data[i] = []
+    for (let j=0; j<n; j++){
+      data[i].push(0)
+    }
+  }
+  return data 
+}
+
+function routes(m,n){
+  let ways = zeros2d(m+1,n+1)
+  let i,j
+  for (i=0; i<=m; i++) ways[i][0] = 1
+  for (j=0; j<=n; j++) ways[0][j] = 1
+
+  for (i=1; i<=m; i++){
+    for (j=1; j<=n; j++){
+      ways[i][j] = ways[i-1][j] + ways[i][j-1]
+    }
+  }
+  return ways[m][n]
+}
+console.log(routes(20,20))
+
 
 

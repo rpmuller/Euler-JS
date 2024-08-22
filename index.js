@@ -267,7 +267,7 @@ function zeros2d(m,n){
   return data 
 }
 
-function routes(m,n){
+function p15(m,n){
   let ways = zeros2d(m+1,n+1)
   let i,j
   for (i=0; i<=m; i++) ways[i][0] = 1
@@ -280,7 +280,7 @@ function routes(m,n){
   }
   return ways[m][n]
 }
-console.log(routes(20,20))
+console.log(p15(20,20))
 
 
 

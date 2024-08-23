@@ -100,7 +100,7 @@ function p3(n = 600_851_475_143){
 
 // P4: https://projecteuler.net/problem=4
 function digits(n) {
-  return n.toString().split("");
+  return n.toString().split("").map(Number);
 }
 //console.log(digits(12))
 function ispalindrome(n) {
@@ -280,7 +280,71 @@ function p15(m,n){
   }
   return ways[m][n]
 }
-console.log(p15(20,20))
+function p16(){
+  let val = 2n**1000n
+  let dsum = sum(digits(val))
+  console.log(dsum)
+}
+
+function p17(){
+  //console.log(sum([1,2,3,4,5].map(number_as_letter_count)))
+  //console.log(sum([342,115].map(number_as_letter_count)))
+  console.log(sum(range(1,1001).map(number_as_letter_count)))
+}
+
+function divmod(n,m){
+  let mod = n%m,
+    div = Math.floor(n/m)
+  return [div,mod]
+}
+
+function number_as_word(n){
+  let digits = ['','one','two','three','four','five','six','seven','eight',
+    'nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen',
+    'seventeen','eighteen','nineteen'],
+    tens = ['zero','ten','twenty','thirty','forty','fifty','sixty','seventy',
+      'eighty','ninety']
+
+  let ts,hs,rest
+  
+  if (n === 1000) {
+    return 'onethousand'
+  } else if (n > 99) {
+    [hs,rest] = divmod(n,100)
+    if (rest>0) {
+      return digits[hs] + 'hundredand' + number_as_word(rest)
+    } else {
+      return digits[hs] + 'hundred'
+    }
+
+  } else if (n < 20) {
+    return digits[n]
+  } else if (n < 100) {
+    [ts,rest] = divmod(n,10)
+    return tens[ts] + digits[rest]
+  }
+  return 'xxx'
+}
+
+function number_as_letter_count(n) {return number_as_word(n).length}
+
+function p19(){
+  /*
+  1 Jan 1900 was a Monday.
+  Thirty days has September,
+  April, June and November.
+  All the rest have thirty-one,
+  Saving February alone,
+  Which has twenty-eight, rain or shine.
+  And on leap years, twenty-nine.
+
+  A leap year occurs on any year evenly divisible by 4, 
+  but not on a century unless it is divisible by 400.
+
+  How many Sundays fell on the first of the month 
+  during the twentieth century (1 Jan 1901 to 31 Dec 2000)?
+  */
+}
 
 
 

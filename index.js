@@ -1,6 +1,7 @@
 "use strict"
 
 const { count } = require("console");
+const { fstat } = require("fs");
 
 // General Utils
 function range(start, end = 0, step = 1) {
@@ -181,6 +182,25 @@ function zeros2d(m,n){
   return data 
 }
 
+class Matrix {
+  constructor(nrows,ncols,val=0) {
+    this.nrows = nrows;
+    this.ncols = ncols;
+    this.data = new Array(nrows*ncols).fill(val)
+  }
+
+  get(i,j) {
+    return this.data[i+(j-1)*this.ncols];
+  }
+
+  set(i,j,val) {
+    this.data[i+(j-1)*this.ncols] = val;
+  }
+
+}
+let test = new Matrix(5,4,1)
+console.assert(test.get(1,1,1) === 1)
+
 function divmod(n,m){
   let mod = n%m,
     div = Math.floor(n/m)
@@ -268,3 +288,22 @@ function proper_divisors(n){
 }
 console.assert(arrays_equal(proper_divisors(220),[1,2,4,5,10,11,20,22,44,55,110]))
 
+function word_value(word){
+  let val=0;
+  let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  for (let c of word) val += letters.indexOf(c)+1;
+  return val;
+}
+console.assert(word_value("COLIN")===53)
+
+function p22(){
+  const fs = require("fs");
+  let data = fs.readFileSync("names.txt","utf-8");
+  data = data.replaceAll('"','').split(",").sort();
+  let val = 0;
+
+  for (let [index,name] of data.entries())
+    val += (index+1)*word_value(name);
+  return val;
+}
+console.assert(p22()===871198282)

@@ -106,6 +106,20 @@ function p15(m,n){
     }
     return ways[m][n]
 }  
+
+function p15a(m,n){
+  let ways = new Matrix(m+1,n+1);
+  let i,j;
+  for (i=0; i<=m; i++) ways.set(i,0,1);
+  for (j=0; j<=n; j++) ways.set(0,j,1);
+
+  for (i=1; i<=m; i++)
+      for (j=1; j<=n; j++) 
+        ways.set(i,j,ways.get(i-1,j) + ways.get(i,j-1));
+
+  return ways.get(m,n);
+}  
+console.log(p15a(20,20))
   
 function p16(){
     let val = 2n**1000n

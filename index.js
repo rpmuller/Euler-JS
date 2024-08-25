@@ -296,3 +296,14 @@ function word_value(word){
 }
 console.assert(word_value("COLIN")===53)
 
+function is_abundant(n){
+  return sum(proper_divisors(n)) > n;
+}
+console.assert(is_abundant(12))
+
+function calc_abundants(nmax){
+  return range(2,nmax).filter(is_abundant)
+}
+console.assert(arrays_equal(calc_abundants(20),[12,18]))
+
+p22

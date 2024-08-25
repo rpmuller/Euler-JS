@@ -188,3 +188,24 @@ function p21(nmax=10_000){
   return amicables
 }
 console.assert(sum(Array.from(p21()))==31626)
+
+function p23(){
+  let abundants = calc_abundants(30_000),
+    ab_sums = new Array(30_000).fill(false);
+  let a,b;
+  for (a of abundants){
+    for (b of abundants){
+      if (a<b) break;
+      if (a+b < 30_000) ab_sums[a+b] = true;
+    }
+  }
+  let non_absums = [];
+  for (let [i,is_absum] of ab_sums.entries()){
+    if (!is_absum) {
+      non_absums.push(i);
+      //console.log(i,is_absum);
+    }
+  }
+  return sum(non_absums);
+}
+console.assert(p23() === 4179871)

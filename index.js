@@ -296,14 +296,3 @@ function word_value(word){
 }
 console.assert(word_value("COLIN")===53)
 
-function p22(){
-  const fs = require("fs");
-  let data = fs.readFileSync("names.txt","utf-8");
-  data = data.replaceAll('"','').split(",").sort();
-  let val = 0;
-
-  for (let [index,name] of data.entries())
-    val += (index+1)*word_value(name);
-  return val;
-}
-console.assert(p22()===871198282)

@@ -120,6 +120,19 @@ function p15a(m,n){
   return ways.get(m,n);
 }  
 console.log(p15a(20,20))
+
+function p22(){
+  const fs = require("fs");
+  let data = fs.readFileSync("names.txt","utf-8");
+  data = data.replaceAll('"','').split(",").sort();
+  let val = 0;
+
+  for (let [index,name] of data.entries())
+    val += (index+1)*word_value(name);
+  return val;
+}
+console.assert(p22()===871198282)
+
   
 function p16(){
     let val = 2n**1000n

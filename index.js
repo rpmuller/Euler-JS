@@ -305,5 +305,3 @@ function calc_abundants(nmax){
   return range(2,nmax).filter(is_abundant)
 }
 console.assert(arrays_equal(calc_abundants(20),[12,18]))
-
-p22

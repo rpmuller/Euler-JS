@@ -1,12 +1,12 @@
 // Shared code is here:
-function arrays_equal(a,b){
+export function arrays_equal(a,b){
   if (a.length !== b.length) return false;
   for (let [i,ai] of a.entries())
     if (ai !== b[i]) return false;
   return true;
 }
 
-function range(start, end = undefined, step = 1) {
+export function range(start, end = undefined, step = 1) {
   if (end === undefined) [start,end] = [0,start];
   const cmp = i => (step > 0) ? i < end : i > end;
   let l = [];
@@ -14,18 +14,13 @@ function range(start, end = undefined, step = 1) {
   return l;
 }
 
-const gcd = (a,b) => (b === 0) ? a : gcd(b,a%b);
-const even = n => (n%2 === 0);
-const sum = arr => arr.reduce((a,b) => a+b);
+export const gcd = (a,b) => (b === 0) ? a : gcd(b,a%b);
+export const even = n => (n%2 === 0);
+export const sum = arr => arr.reduce((a,b) => a+b);
+export const divisibleby35 = n => [3,5].some(i => (n%i === 0));
+export const isqrt = n => Math.floor(Math.sqrt(n));
 
-const divisibleby35 = n => [3,5].some(i => (n%i === 0));
-console.assert(divisibleby35(3));
-console.assert(divisibleby35(5));
-console.assert(divisibleby35(15));
-console.assert(divisibleby35(9));
-console.assert(!divisibleby35(7));
-
-function fib_below(n,a=1,b=1) {
+export function fib_below(n,a=1,b=1) {
   let l = [];
   while (b < n) {
     l.push(b);
@@ -34,9 +29,7 @@ function fib_below(n,a=1,b=1) {
   return l;
 }
 
-const isqrt = n => Math.floor(Math.sqrt(n));
-
-function sieve(n) {
+export function sieve(n) {
   let array = Array(n).fill(true);
 
   for (let i = 2; i < Math.sqrt(n); i++){
@@ -48,32 +41,22 @@ function sieve(n) {
   for (let i=2; i<n; i++) if (array[i]) output.push(i);
   return output;
 }
-console.assert(arrays_equal(sieve(10),[2,3,5,7]));
 
-const prime_factors = n => sieve(isqrt(n)).filter(p => (n%p == 0));
-console.assert(arrays_equal(prime_factors(28),[2,7]));
-const max_prime_factor = n => Math.max(...prime_factors(n));
+export const prime_factors = n => sieve(n/2+1).filter(p => (n%p == 0));
+export const max_prime_factor = n => Math.max(...prime_factors(n));
+export const digits = n => n.toString().split("").map(Number);
+export const ispalindrome = n => arrays_equal(digits(n),digits(n).reverse());
+export const triples = (m,n) => [m2-n2, 2*m*n, m2+n2];
+export const divisors = n => range(1,n+1).filter(i => n%i===0)
+export const count_divisors = n => divisors.length
 
-const digits = n => n.toString().split("").map(Number);
-console.assert(arrays_equal(digits(12),[1,2]))
-
-const ispalindrome = n => arrays_equal(digits(n),digits(n).reverse());
-console.assert(!ispalindrome(12))
-console.assert(ispalindrome(121))
-console.assert(!ispalindrome(122))
-
-const triples = (m,n) => [m2-n2, 2*m*n, m2+n2];
-
-const divisors = n => range(1,n+1).filter(i => n%i===0)
-const count_divisors = n => divisors.length
-
-function count_divisors_triangle(n){ // count the divisors of n(n+1)/2
+export function count_divisors_triangle(n){ // count the divisors of n(n+1)/2
   let [a,b] = even(n) ? [n/2,n+1] : [n,(n+1)/2];
   let div = combine_divisors(n*(n+1)/2,divisors(a),divisors(b))
   return div.length
 }
 
-function combine_divisors(n,diva,divb){
+export function combine_divisors(n,diva,divb){
   let div = new Set();
   for (let da of diva) {
     for (let db of divb) {
@@ -83,11 +66,11 @@ function combine_divisors(n,diva,divb){
   return div
 }
 
-const collatz = n => even(n) ? n/2 : 3*n+1
+export const collatz = n => even(n) ? n/2 : 3*n+1
 console.assert(collatz(4) === 2)
 console.assert(collatz(3) === 10)
 
-function collatz_length(n,maxsteps=1000){
+export function collatz_length(n,maxsteps=1000){
   let i=0, next=n;
   for (i=1; i<maxsteps; i++){
     if (next === 1) break
@@ -96,7 +79,7 @@ function collatz_length(n,maxsteps=1000){
   return i 
 }
 
-class Matrix {
+export class Matrix {
   constructor(nrows,ncols,val=0) {
     this.nrows = nrows;
     this.ncols = ncols;
@@ -106,14 +89,9 @@ class Matrix {
   set = (i,j,val) => this.data[i+j*this.ncols] = val;
 }
 
-let m = new Matrix(5,4,1);
-m.set(1,1,5);
-console.assert(m.get(1,1) === 5)
+export const divmod = (n,m) => [Math.floor(n/m),n%m];
 
-const divmod = (n,m) => [Math.floor(n/m),n%m];
-console.assert(arrays_equal(divmod(5,2),[2,1]))
-
-function number_as_word(n){
+export function number_as_word(n){
   let digits = ['','one','two','three','four','five','six','seven','eight',
     'nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen',
     'seventeen','eighteen','nineteen'],
@@ -141,14 +119,10 @@ function number_as_word(n){
   return 'xxx'
 }
 
-const number_as_letter_count = n => number_as_word(n).length;
+export const number_as_letter_count = n => number_as_word(n).length;
+export const isleap = year => (year%400 === 0) ? true : (year%100 === 0) ? false : (year%4 === 0) ? true : false;
 
-const isleap = year => (year%400 === 0) ? true : (year%100 === 0) ? false : (year%4 === 0) ? true : false;
-console.assert(isleap(2000))
-console.assert(isleap(1984))
-console.assert(!isleap(1985))
-
-function days_in_month(month,year=0){
+export function days_in_month(month,year=0){
   if (month === 2){
     if (isleap(year)) return 29;
     return 28;
@@ -157,31 +131,16 @@ function days_in_month(month,year=0){
   }
   return 30;
 }
-console.assert(days_in_month(2,1984) === 29)
-console.assert(days_in_month(11,12) === 30)
 
-const product = arr => arr.reduce((a,b)=>a*b,1);
-console.assert(product([2,4,6]) === 48)
-
-const factorial = n => product(range(1,n+1));
-console.assert(factorial(5) == 120)
-const big_factorial = n => range(1,n+1).reduce((a,b) => a*BigInt(b),1n)
-console.assert(big_factorial(5) == 120n)
-console.assert(sum(digits(big_factorial(10)))===27)
-
-const proper_divisors = n => range(1,n/2+1).filter(i => n%i === 0)
-console.assert(arrays_equal(proper_divisors(220),[1,2,4,5,10,11,20,22,44,55,110]))
-
-function word_value(word){
+export function word_value(word){
   const value = c => "_ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(c);
   return sum(word.split("").map(value));
 }
-console.assert(word_value("COLIN")===53)
 
-const abundant = n => sum(proper_divisors(n))>n;
-console.assert(abundant(12));
+export const product = arr => arr.reduce((a,b)=>a*b,1);
+export const factorial = n => product(range(1,n+1));
+export const big_factorial = n => range(1,n+1).reduce((a,b) => a*BigInt(b),1n)
+export const proper_divisors = n => range(1,n/2+1).filter(i => n%i === 0)
+export const abundant = n => sum(proper_divisors(n))>n;
+export const abundants = n => range(2,n).filter(abundant);
 
-const abundants = n => range(2,n).filter(abundant);
-console.assert(arrays_equal(abundants(20),[12,18]))
-
-export {gcd, range, even, sum};

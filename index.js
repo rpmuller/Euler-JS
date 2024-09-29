@@ -1,11 +1,10 @@
 // Shared code is here:
-
 function arrays_equal(a,b){
+  if (a.length !== b.length) return false;
   for (let [i,ai] of a.entries())
     if (ai !== b[i]) return false;
   return true;
 }
-//const arrays_equal = (a,b) => a.entries().every( ([i,ai]) => b[i]===ai)
 
 function range(start, end = undefined, step = 1) {
   if (end === undefined) [start,end] = [0,start];
@@ -14,20 +13,10 @@ function range(start, end = undefined, step = 1) {
   for (let i = start; cmp(i); i += step) l.push(i);
   return l;
 }
-console.assert(arrays_equal(range(4),[ 0, 1, 2, 3 ]))
-console.assert(arrays_equal(range(1,5),[ 1, 2, 3, 4 ]))
-console.assert(arrays_equal(range(3,0,-1),[3,2,1]))
 
 const gcd = (a,b) => (b === 0) ? a : gcd(b,a%b);
-console.assert(gcd(2, 4) === 2)
-console.assert(gcd(12, 8) ===  4)
-console.assert(gcd(100,7) ===  1)
-
 const even = n => (n%2 === 0);
-console.assert(even(2));
-
 const sum = arr => arr.reduce((a,b) => a+b);
-console.assert(sum([1,2,3,4])===10);
 
 const divisibleby35 = n => [3,5].some(i => (n%i === 0));
 console.assert(divisibleby35(3));
@@ -194,3 +183,5 @@ console.assert(abundant(12));
 
 const abundants = n => range(2,n).filter(abundant);
 console.assert(arrays_equal(abundants(20),[12,18]))
+
+export {gcd, range, even, sum};

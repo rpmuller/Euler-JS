@@ -1,78 +1,42 @@
-"use strict"
+// Shared code is here:
 
-const { count } = require("console");
-const { fstat } = require("fs");
+function arrays_equal(a,b){
+  for (let [i,ai] of a.entries())
+    if (ai !== b[i]) return false;
+  return true;
+}
+//const arrays_equal = (a,b) => a.entries().every( ([i,ai]) => b[i]===ai)
 
-// General Utils
-function range(start, end = 0, step = 1) {
+function range(start, end = undefined, step = 1) {
+  if (end === undefined) [start,end] = [0,start];
+  const cmp = i => (step > 0) ? i < end : i > end;
   let l = [];
-  if (end === 0) {
-    end = start;
-    start = 0;
-  }
-  for (let i = start; i < end; i += step) l.push(i);
+  for (let i = start; cmp(i); i += step) l.push(i);
   return l;
 }
 console.assert(arrays_equal(range(4),[ 0, 1, 2, 3 ]))
 console.assert(arrays_equal(range(1,5),[ 1, 2, 3, 4 ]))
+console.assert(arrays_equal(range(3,0,-1),[3,2,1]))
 
-function arrays_equal(a,b){
-  if (a.length != b.length) return false
-  if (a === b) return true;
-  if (a == null || b == null) return false;
-
-  for (let i=0; i<a.length; i++){
-    if (a[i] != b[i]) return false
-  }
-  return true
-}
-
-function gcd(a, b) {
-  if (b === 0) return a;
-  return gcd(b, a % b);
-}
+const gcd = (a,b) => (b === 0) ? a : gcd(b,a%b);
 console.assert(gcd(2, 4) === 2)
 console.assert(gcd(12, 8) ===  4)
 console.assert(gcd(100,7) ===  1)
 
-function prime_sieve(n) {
-  let array = [],
-    output = [],
-    limit = Math.sqrt(n);
-  for (let i = 0; i < n; i++) array.push(true);
+const even = n => (n%2 === 0);
+console.assert(even(2));
 
-  for (let i = 2; i < limit; i++) {
-    if (array[i]) {
-      for (let j = i * i; j < n; j += i) {
-        array[j] = false;
-      }
-    }
-  }
-  for (let i = 2; i < n; i++) if (array[i]) output.push(i);
-  return output;
-}
-// console.log(prime_sieve(10)) // [2,3,5,7]
+const sum = arr => arr.reduce((a,b) => a+b);
+console.assert(sum([1,2,3,4])===10);
 
-function iseven(n) {
-  return n % 2 === 0;
-}
-// console.log(iseven(2)) // true
+const divisibleby35 = n => [3,5].some(i => (n%i === 0));
+console.assert(divisibleby35(3));
+console.assert(divisibleby35(5));
+console.assert(divisibleby35(15));
+console.assert(divisibleby35(9));
+console.assert(!divisibleby35(7));
 
-function sum(arr) {
-  let tot = 0;
-  for (let i = 0; i < arr.length; i++) tot += arr[i];
-  return tot;
-}
-console.assert(sum([1,2,3,4])===10)
-
-function divisibleby35(n) {
-  return n % 3 === 0 || n % 5 === 0;
-}
-
-
-function fib_seq_below(n) {
-  let a = 1,
-    b = 1;
+function fib_below(n,a=1,b=1) {
   let l = [];
   while (b < n) {
     l.push(b);
@@ -81,69 +45,43 @@ function fib_seq_below(n) {
   return l;
 }
 
+const isqrt = n => Math.floor(Math.sqrt(n));
 
-function isqrt(n) {
-  return Math.floor(Math.sqrt(n));
-}
-function prime_factors(n) {
-  let ps = prime_sieve(isqrt(n));
-  return ps.filter((p) => n % p === 0);
-}
-function max_prime_factor(n) {
-  return Math.max(...prime_factors(n));
-}
+function sieve(n) {
+  let array = Array(n).fill(true);
 
-function digits(n) {
-  return n.toString().split("").map(Number);
+  for (let i = 2; i < Math.sqrt(n); i++){
+    if (array[i])
+      for (let j = i * i; j < n; j += i)
+        array[j] = false;
+  }
+  let output = []
+  for (let i=2; i<n; i++) if (array[i]) output.push(i);
+  return output;
 }
+console.assert(arrays_equal(sieve(10),[2,3,5,7]));
+
+const prime_factors = n => sieve(isqrt(n)).filter(p => (n%p == 0));
+console.assert(arrays_equal(prime_factors(28),[2,7]));
+const max_prime_factor = n => Math.max(...prime_factors(n));
+
+const digits = n => n.toString().split("").map(Number);
 console.assert(arrays_equal(digits(12),[1,2]))
 
-function ispalindrome(n) {
-  return digits(n).join("") === digits(n).reverse().join("");
-}
+const ispalindrome = n => arrays_equal(digits(n),digits(n).reverse());
 console.assert(!ispalindrome(12))
 console.assert(ispalindrome(121))
+console.assert(!ispalindrome(122))
 
+const triples = (m,n) => [m2-n2, 2*m*n, m2+n2];
 
-// P9:
-function triples(m,n){
-  let m2=m*m, n2=n*n;
-  return [m2-n2, 2*m*n, m2+n2]
-}
+const divisors = n => range(1,n+1).filter(i => n%i===0)
+const count_divisors = n => divisors.length
 
-
-function count_divisors(n){
-  let count = 0;
-  for (let i=1; i<=n; i++) {
-    if (n%i===0) count++;
-  }
-  return count;
-}
-
-function list_divisors(n) {
-   let divisors = [];
-   for (let i=1; i<=n; i++) {
-     if (n%i===0) divisors.push(i);
-   }
-   return divisors
-}
-
-function count_divisors_triangle(n){
-  // count the divisors of n(n+1)/2
-  let a=0, b=0;
-  
-  if (iseven(n)){
-    a = n/2
-    b = n+1
-  } else {
-    a = n
-    b = (n+1)/2
-  }
-  let diva = list_divisors(a);
-  let divb = list_divisors(b);
-
-  let div = combine_divisors(n*(n+1)/2,diva,divb)
-  return div.size
+function count_divisors_triangle(n){ // count the divisors of n(n+1)/2
+  let [a,b] = even(n) ? [n/2,n+1] : [n,(n+1)/2];
+  let div = combine_divisors(n*(n+1)/2,divisors(a),divisors(b))
+  return div.length
 }
 
 function combine_divisors(n,diva,divb){
@@ -156,30 +94,17 @@ function combine_divisors(n,diva,divb){
   return div
 }
 
-function collatz_step(n){
-  return iseven(n) ? n/2 : 3*n+1
-}
-console.assert(collatz_step(4) === 2)
-console.assert(collatz_step(3) === 10)
+const collatz = n => even(n) ? n/2 : 3*n+1
+console.assert(collatz(4) === 2)
+console.assert(collatz(3) === 10)
 
 function collatz_length(n,maxsteps=1000){
   let i=0, next=n;
   for (i=1; i<maxsteps; i++){
     if (next === 1) break
-    next = iseven(next) ? next/2 : 3*next+1
+    next = collatz(next)
   }
   return i 
-}
-
-function zeros2d(m,n){
-  let data = []
-  for (let i=0; i<m; i++){
-    data[i] = []
-    for (let j=0; j<n; j++){
-      data[i].push(0)
-    }
-  }
-  return data 
 }
 
 class Matrix {
@@ -188,24 +113,15 @@ class Matrix {
     this.ncols = ncols;
     this.data = new Array(nrows*ncols).fill(val)
   }
-
-  get(i,j) {
-    return this.data[i+(j-1)*this.ncols];
-  }
-
-  set(i,j,val) {
-    this.data[i+(j-1)*this.ncols] = val;
-  }
-
+  get = (i,j) => this.data[i+j*this.ncols];
+  set = (i,j,val) => this.data[i+j*this.ncols] = val;
 }
-let test = new Matrix(5,4,1)
-console.assert(test.get(1,1,1) === 1)
 
-function divmod(n,m){
-  let mod = n%m,
-    div = Math.floor(n/m)
-  return [div,mod]
-}
+let m = new Matrix(5,4,1);
+m.set(1,1,5);
+console.assert(m.get(1,1) === 5)
+
+const divmod = (n,m) => [Math.floor(n/m),n%m];
 console.assert(arrays_equal(divmod(5,2),[2,1]))
 
 function number_as_word(n){
@@ -236,72 +152,45 @@ function number_as_word(n){
   return 'xxx'
 }
 
-function number_as_letter_count(n) {return number_as_word(n).length}
+const number_as_letter_count = n => number_as_word(n).length;
 
-function isleap(year){
-  if (year%400 === 0) return true
-  if (year%100 === 0) return false
-  if (year%4 === 0) return true
-  return false
-}
+const isleap = year => (year%400 === 0) ? true : (year%100 === 0) ? false : (year%4 === 0) ? true : false;
 console.assert(isleap(2000))
 console.assert(isleap(1984))
 console.assert(!isleap(1985))
 
 function days_in_month(month,year=0){
   if (month === 2){
-    if (isleap(year)) return 29
-    return 28
+    if (isleap(year)) return 29;
+    return 28;
   } else if ([1,3,5,7,8,10,12].includes(month)) {
-    return 31
+    return 31;
   }
-  return 30
+  return 30;
 }
 console.assert(days_in_month(2,1984) === 29)
 console.assert(days_in_month(11,12) === 30)
 
-function product(arr){
-  let prod = 1
-  for (let a of arr) prod *= a
-  return prod
-}
+const product = arr => arr.reduce((a,b)=>a*b,1);
 console.assert(product([2,4,6]) === 48)
 
-function factorial(n){
-  return product(range(1,n+1))
-}
+const factorial = n => product(range(1,n+1));
 console.assert(factorial(5) == 120)
-
-function big_factorial(n){
-  let prod = 1n
-  for (let i=1n; i<BigInt(n+1); i++) prod *= i
-  return prod
-}
+const big_factorial = n => range(1,n+1).reduce((a,b) => a*BigInt(b),1n)
 console.assert(big_factorial(5) == 120n)
 console.assert(sum(digits(big_factorial(10)))===27)
 
-function proper_divisors(n){
-  let divs = [1]
-  for (let i=2; i<=Math.ceil(n/2); i++)
-    if (n%i === 0) divs.push(i)
-  return divs
-}
+const proper_divisors = n => range(1,n/2+1).filter(i => n%i === 0)
 console.assert(arrays_equal(proper_divisors(220),[1,2,4,5,10,11,20,22,44,55,110]))
 
 function word_value(word){
-  let val=0;
-  let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  for (let c of word) val += letters.indexOf(c)+1;
-  return val;
+  const value = c => "_ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(c);
+  return sum(word.split("").map(value));
 }
 console.assert(word_value("COLIN")===53)
 
-function is_abundant(n){
-  return sum(proper_divisors(n)) > n;
-}
-console.assert(is_abundant(12))
+const abundant = n => sum(proper_divisors(n))>n;
+console.assert(abundant(12));
 
-function calc_abundants(nmax){
-  return range(2,nmax).filter(is_abundant)
-}
-console.assert(arrays_equal(calc_abundants(20),[12,18]))
+const abundants = n => range(2,n).filter(abundant);
+console.assert(arrays_equal(abundants(20),[12,18]))
